@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Medical Assistant</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Link to our new stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+    <div class="chat-container">
+        <!-- Header Section -->
+        <header class="chat-header">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+            <h1>AI Medical Assistant</h1>
+        </header>
+
+        <!-- Chat Messages Area -->
+        <main id="chat-box">
+            {% for msg in messages %}
+                {% if msg.role == 'user' %}
+                <!-- User Message -->
+                <div class="message user">
+                    <div class="message-content">
+                        <p class="message-sender">You</p>
+                        <p>{{ msg.content | safe | nl2br }}</p>
+                    </div>
+                </div>
+                {% else %}
+                <!-- Assistant Message -->
+                <div class="message assistant">
+                    <div class="assistant-avatar">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+                    </div>
+                    <div class="message-content">
+                        <p class="message-sender">Assistant</p>
+                        <p>{{ msg.content | safe | nl2br }}</p>
+                    </div>
+                </div>
+                {% endif %}
+            {% endfor %}
+        </main>
+
+        <!-- Input Form Area -->
+        <footer class="chat-footer">
+            <form method="post" action="{{ url_for('index') }}" class="chat-form">
+                <textarea name="prompt" placeholder="Ask a detailed medical question..." required rows="1"></textarea>
+                <div class="button-group">
+                    <button type="submit" class="btn btn-primary">Send</button>
+                    <a href="{{ url_for('clear') }}" class="btn btn-secondary">Clear</a>
+                </div>
+            </form>
+        </footer>
+    </div>
+
+    <script>
+        // Auto-scroll to the bottom of the chat box
+        const chatBox = document.getElementById('chat-box');
+        chatBox.scrollTop = chatBox.scrollHeight;
+
+        // Auto-resize textarea
+        const textarea = document.querySelector('textarea');
+        textarea.addEventListener('input', () => {
+            textarea.style.height = 'auto';
+            let newHeight = textarea.scrollHeight;
+            if (newHeight > 250) {
+                newHeight = 250;
+                textarea.style.overflowY = 'auto';
+            } else {
+                textarea.style.overflowY = 'hidden';
+            }
+            textarea.style.height = newHeight + 'px';
+        });
+    </script>
+</body>
+</html>
